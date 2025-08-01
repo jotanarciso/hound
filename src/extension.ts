@@ -64,7 +64,7 @@ async function generateSnippetImage(
     await page.setContent(html);
 
     // Wait for content to render
-    await page.waitForTimeout(1000);
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Get the element and take screenshot
     const element = await page.$(".code-container");
