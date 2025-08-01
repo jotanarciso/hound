@@ -173,7 +173,9 @@ async function generateSnippetImageWithTheme(
     throw new Error("No workspace folder found");
   }
 
-  const outputDir = path.join(workspaceFolder.uri.fsPath, ".cirneco");
+  // Get output folder from config (ask user if first time)
+  const outputFolderName = await ensureOutputFolder();
+  const outputDir = path.join(workspaceFolder.uri.fsPath, outputFolderName);
   await fs.ensureDir(outputDir);
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
@@ -312,7 +314,9 @@ async function generateSnippetImage(
     throw new Error("No workspace folder found");
   }
 
-  const outputDir = path.join(workspaceFolder.uri.fsPath, ".cirneco");
+  // Get output folder from config (ask user if first time)
+  const outputFolderName = await ensureOutputFolder();
+  const outputDir = path.join(workspaceFolder.uri.fsPath, outputFolderName);
   await fs.ensureDir(outputDir);
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
@@ -420,6 +424,7 @@ interface Theme {
 interface CirnecoConfig {
   theme?: string;
   customThemes?: { [key: string]: Theme };
+  outputFolder?: string;
 }
 
 function loadTheme(): Theme {
@@ -778,6 +783,62 @@ function createHTML(code: string, language: string): string {
 </body>
 </html>
     `;
+}
+
+async function ensureOutputFolder(): Promise<string> {
+  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+  if (!workspaceFolder) {
+    throw new Error('No workspace folder found');
+  }
+
+  const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
+  let config: CirnecoConfig = {};
+  
+  // Read existing config
+  if (fs.existsSync(configPath)) {
+    try {
+      const configContent = fs.readFileSync(configPath, 'utf8');
+      config = JSON.parse(configContent);
+    } catch (error) {
+      console.error('Cirne.co: Error reading config:', error);
+    }
+  }
+
+  // If outputFolder is not set, ask user
+  if (!config.outputFolder) {
+    const folderName = await vscode.window.showInputBox({
+      prompt: 'Cirne.co: Choose folder name to save snippets',
+      placeHolder: 'snippets',
+      value: 'snippets',
+      validateInput: (value) => {
+        if (!value || value.trim() === '') {
+          return 'Folder name cannot be empty';
+        }
+        if (value.includes('/') || value.includes('\\')) {
+          return 'Invalid folder name';
+        }
+        return null;
+      }
+    });
+
+    if (!folderName) {
+      throw new Error('No folder selected');
+    }
+
+    config.outputFolder = folderName.trim();
+    
+    // Save config
+    try {
+      const configContent = JSON.stringify(config, null, 2);
+      fs.writeFileSync(configPath, configContent);
+      console.log(`Cirne.co: Saved output folder: ${config.outputFolder}`);
+    } catch (error) {
+      console.error('Cirne.co: Error saving config:', error);
+      throw error;
+    }
+  }
+
+  return config.outputFolder;
 }
 
 function ensureCirnecoConfig(themeName: string): void {

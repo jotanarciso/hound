@@ -12,6 +12,7 @@ You can customize themes, options, and add custom themes here.
 ```json
 {
   "theme": "dark-mode",
+  "outputFolder": "snippets",
   "customThemes": {
     "my-custom-theme": {
       "name": "My Custom Theme",
@@ -47,6 +48,12 @@ You can customize themes, options, and add custom themes here.
 ```
 
 ## Configuration Options
+
+### Output Folder
+You can specify where snippets are saved:
+- `outputFolder`: Name of the folder where snippets will be saved (default: "snippets")
+- On first use, Cirneco will ask you to choose the folder name
+- The folder will be created in your workspace root
 
 ### Theme Extension
 You can extend existing themes by using the same name:
