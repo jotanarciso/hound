@@ -1,0 +1,29 @@
+{
+  "name": "Liquid Apple",
+  "description": "Tema inspirado no Liquid Design da Apple com glassmorphism e gradientes suaves",
+  "colors": {
+    "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "container": "rgba(255, 255, 255, 0.1)",
+    "codeBlock": "rgba(0, 0, 0, 0.2)",
+    "text": "#ffffff",
+    "border": "rgba(255, 255, 255, 0.2)",
+    "badge": "linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)"
+  },
+  "syntax": {
+    "keyword": "#ff6b9d",
+    "string": "#4ecdc4",
+    "comment": "#95a5a6",
+    "number": "#feca57",
+    "function": "#48dbfb",
+    "class": "#ff9ff3",
+    "operator": "#ffffff",
+    "punctuation": "#ffffff",
+    "variable": "#54a0ff",
+    "property": "#5f27cd"
+  },
+  "options": {
+    "showTitle": true,
+    "showLanguageBadge": true,
+    "showWindowControls": true
+  }
+} 

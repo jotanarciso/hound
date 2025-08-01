@@ -1,0 +1,80 @@
+{
+  "theme": "dark-mode",
+  "options": {
+    "showTitle": true,
+    "showLanguageBadge": true,
+    "showWindowControls": true
+  },
+  "customThemes": {
+    "dark-mode": {
+      "name": "Dark Mode Customizado",
+      "description": "Dark mode com algumas modificações",
+      "colors": {
+        "background": "#0a0a0a",
+        "text": "#ffffff"
+      },
+      "options": {
+        "showTitle": false,
+        "showLanguageBadge": false
+      }
+    },
+    "my-custom-theme": {
+      "name": "My Custom Theme",
+      "description": "Um tema personalizado criado por você",
+      "colors": {
+        "background": "#1a1a1a",
+        "container": "#2d2d2d",
+        "codeBlock": "#1e1e1e",
+        "text": "#ffffff",
+        "border": "#404040",
+        "badge": "#007acc"
+      },
+      "syntax": {
+        "keyword": "#569cd6",
+        "string": "#ce9178",
+        "comment": "#6a9955",
+        "number": "#b5cea8",
+        "function": "#dcdcaa",
+        "class": "#4ec9b0",
+        "operator": "#d4d4d4",
+        "punctuation": "#d4d4d4",
+        "variable": "#9cdcfe",
+        "property": "#9cdcfe"
+      },
+      "options": {
+        "showTitle": false,
+        "showLanguageBadge": true,
+        "showWindowControls": false
+      }
+    },
+    "minimal-theme": {
+      "name": "Minimal Theme",
+      "description": "Tema minimalista sem elementos extras",
+      "colors": {
+        "background": "#0d1117",
+        "container": "#161b22",
+        "codeBlock": "#0d1117",
+        "text": "#c9d1d9",
+        "border": "#30363d",
+        "badge": "#58a6ff"
+      },
+      "syntax": {
+        "keyword": "#ff7b72",
+        "string": "#a5d6ff",
+        "comment": "#8b949e",
+        "number": "#79c0ff",
+        "function": "#d2a8ff",
+        "class": "#ffa657",
+        "operator": "#ff7b72",
+        "punctuation": "#c9d1d9",
+        "variable": "#ffa657",
+        "property": "#79c0ff"
+      },
+      "options": {
+        "showTitle": false,
+        "showLanguageBadge": false,
+        "showWindowControls": false
+      }
+    }
+  }
+} 

@@ -4,5 +4,6 @@
   "dracula": "./themes/dracula.json",
   "github-dark": "./themes/github-dark.json",
   "one-dark": "./themes/one-dark.json",
-  "monokai": "./themes/monokai.json"
+  "monokai": "./themes/monokai.json",
+  "liquid-apple": "./themes/liquid-apple.json"
 } 

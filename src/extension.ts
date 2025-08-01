@@ -7,14 +7,14 @@ import "prismjs/components/prism-typescript";
 import { createHTMLWithFilename } from "./html-generator";
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log("Cirneco is now active!");
+  console.log("Cirne.co is now active!");
 
   let disposable = vscode.commands.registerCommand(
     "cirneco.generateSnippet",
     async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {
-        vscode.window.showErrorMessage("No active editor found");
+        vscode.window.showErrorMessage("Cirne.co: No active editor found");
         return;
       }
 
@@ -22,23 +22,27 @@ export function activate(context: vscode.ExtensionContext) {
       const text = editor.document.getText(selection);
 
       if (!text.trim()) {
-        vscode.window.showErrorMessage("Please select some code first");
+        vscode.window.showErrorMessage("Cirne.co: Please select some code first");
         return;
       }
+
+      // Use dracula as default theme and ensure .cirneco.json exists
+      const defaultThemeName = 'dracula';
+      ensureCirnecoConfig(defaultThemeName);
 
       try {
         // Show loading notification
         await vscode.window.withProgress({
           location: vscode.ProgressLocation.Notification,
-          title: "Generating snippet...",
+                      title: "Cirne.co: Generating snippet...",
           cancellable: false
         }, async (progress) => {
           progress.report({ increment: 0 });
-          await generateSnippetImage(text, editor.document.languageId);
+        await generateSnippetImage(text, editor.document.languageId);
           progress.report({ increment: 100 });
         });
       } catch (error) {
-        vscode.window.showErrorMessage(`Failed to generate snippet: ${error}`);
+        vscode.window.showErrorMessage(`Cirne.co: Failed to generate snippet: ${error}`);
       }
     }
   );
@@ -51,7 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
     async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {
-        vscode.window.showErrorMessage("No active editor found");
+        vscode.window.showErrorMessage("Cirne.co: No active editor found");
         return;
       }
 
@@ -59,7 +63,7 @@ export function activate(context: vscode.ExtensionContext) {
       const text = editor.document.getText(selection);
 
       if (!text.trim()) {
-        vscode.window.showErrorMessage("Please select some code first");
+        vscode.window.showErrorMessage("Cirne.co: Please select some code first");
         return;
       }
 
@@ -71,13 +75,24 @@ export function activate(context: vscode.ExtensionContext) {
       
       // Add custom themes from user config
       if (workspaceFolder) {
-        const configPath = path.join(workspaceFolder.uri.fsPath, 'cirneco.json');
+        const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
         try {
           if (fs.existsSync(configPath)) {
             const configContent = fs.readFileSync(configPath, 'utf8');
             const config = JSON.parse(configContent);
             if (config.customThemes) {
-              Object.assign(allThemes, config.customThemes);
+              // Merge custom themes with built-in themes
+              for (const [themeKey, customTheme] of Object.entries(config.customThemes)) {
+                if (allThemes[themeKey]) {
+                  // If theme already exists, merge it
+                  console.log(`Cirne.co: Merging custom theme "${themeKey}" with built-in theme`);
+                  allThemes[themeKey] = mergeThemes(allThemes[themeKey], customTheme as Theme);
+                } else {
+                  // If it's a new theme, add it
+                  console.log(`Cirne.co: Adding new custom theme "${themeKey}"`);
+                  allThemes[themeKey] = customTheme as Theme;
+                }
+              }
             }
           }
         } catch (error) {
@@ -95,6 +110,9 @@ export function activate(context: vscode.ExtensionContext) {
         return; // User cancelled
       }
 
+      // Save selected theme to .cirneco.json
+      ensureCirnecoConfig(selectedTheme);
+
       try {
         // Get filename from current document
         const fullPath = editor.document.fileName;
@@ -105,7 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
         // Show loading notification
         await vscode.window.withProgress({
           location: vscode.ProgressLocation.Notification,
-          title: `Generating snippet with ${selectedTheme} theme...`,
+                      title: `Cirne.co: Generating snippet with ${selectedTheme} theme...`,
           cancellable: false
         }, async (progress) => {
           progress.report({ increment: 0 });
@@ -113,7 +131,7 @@ export function activate(context: vscode.ExtensionContext) {
           progress.report({ increment: 100 });
         });
       } catch (error) {
-        vscode.window.showErrorMessage(`Failed to generate snippet: ${error}`);
+        vscode.window.showErrorMessage(`Cirne.co: Failed to generate snippet: ${error}`);
       }
     }
   );
@@ -145,7 +163,7 @@ async function generateSnippetImageWithTheme(
   
   // Add custom themes from user config
   if (workspaceFolder) {
-    const configPath = path.join(workspaceFolder.uri.fsPath, 'cirneco.json');
+    const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
     try {
       if (fs.existsSync(configPath)) {
         const configContent = fs.readFileSync(configPath, 'utf8');
@@ -233,7 +251,7 @@ async function generateSnippetImageWithTheme(
 
     vscode.window
       .showInformationMessage(
-        `Snippet generated successfully with ${themeName} theme: ${outputFilename}`,
+        `Cirne.co: Snippet generated successfully with ${themeName} theme: ${outputFilename}`,
         "Open Folder"
       )
       .then((selection) => {
@@ -319,7 +337,7 @@ async function generateSnippetImage(
 
     vscode.window
       .showInformationMessage(
-        `Snippet generated successfully: ${filename}`,
+        `Cirne.co: Snippet generated successfully: ${filename}`,
         "Open Folder"
       )
       .then((selection) => {
@@ -358,11 +376,21 @@ interface Theme {
     variable: string;
     property: string;
   };
+  options?: {
+    showTitle?: boolean;
+    showLanguageBadge?: boolean;
+    showWindowControls?: boolean;
+  };
 }
 
 interface CirnecoConfig {
-  defaultTheme?: string;
+  theme?: string;
   customThemes?: { [key: string]: Theme };
+  options?: {
+    showTitle?: boolean;
+    showLanguageBadge?: boolean;
+    showWindowControls?: boolean;
+  };
 }
 
 function loadTheme(): Theme {
@@ -371,7 +399,7 @@ function loadTheme(): Theme {
     return getDefaultTheme();
   }
 
-  const configPath = path.join(workspaceFolder.uri.fsPath, 'cirneco.json');
+  const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
   
   try {
     if (fs.existsSync(configPath)) {
@@ -514,11 +542,11 @@ function createHTML(code: string, language: string): string {
   } catch (error) {
     // Fallback to plain text if highlighting fails
     highlightedCode = code
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
   }
 
   return `
@@ -721,6 +749,66 @@ function createHTML(code: string, language: string): string {
 </body>
 </html>
     `;
+}
+
+function ensureCirnecoConfig(themeName: string): void {
+  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+  if (!workspaceFolder) {
+    return;
+  }
+
+  const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
+  
+  try {
+    let config: CirnecoConfig = {};
+    
+    // Load existing config if it exists
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, 'utf8');
+      config = JSON.parse(configContent);
+    }
+    
+    // Update or set the theme
+    config.theme = themeName;
+    
+    // Add default options if they don't exist
+    if (!config.options) {
+      config.options = {
+        showTitle: true,
+        showLanguageBadge: true,
+        showWindowControls: true
+      };
+    }
+    
+    // Create the config content
+    const configContent = JSON.stringify(config, null, 2);
+    
+    // Write the config file
+    fs.writeFileSync(configPath, configContent);
+    console.log(`Cirne.co: Updated .cirneco.json with theme: ${themeName}`);
+    
+  } catch (error) {
+    console.error('Cirne.co: Error updating .cirneco.json:', error);
+  }
+}
+
+function mergeThemes(baseTheme: Theme, customTheme: Theme): Theme {
+  return {
+    name: customTheme.name || baseTheme.name,
+    description: customTheme.description || baseTheme.description,
+    colors: {
+      ...baseTheme.colors,
+      ...customTheme.colors
+    },
+    syntax: {
+      ...baseTheme.syntax,
+      ...customTheme.syntax
+    },
+    options: {
+      ...baseTheme.options,
+      ...customTheme.options
+    }
+  };
 }
 
 export function deactivate() {}

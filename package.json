@@ -1,6 +1,6 @@
 {
   "name": "cirneco",
-  "displayName": "Cirneco",
+  "displayName": "Cirne.co",
   "description": "Generate beautiful code snippets as PNG images",
   "version": "1.0.0",
   "engines": {
@@ -14,11 +14,11 @@
     "commands": [
       {
         "command": "cirneco.generateSnippet",
-        "title": "Cirneco: GENERATE local snippet"
+        "title": "Cirne.co: Generate with default theme"
       },
       {
         "command": "cirneco.generateSnippetWithTheme",
-        "title": "Cirneco: GENERATE snippet with theme"
+        "title": "Cirne.co: Generate with theme picker"
       }
     ],
     "keybindings": []
