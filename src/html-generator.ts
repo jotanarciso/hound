@@ -97,16 +97,22 @@ export function createHTMLWithFilename(code: string, language: string, theme: Th
 <head>
     <meta charset="UTF-8">
     <style>
-        body {
+        html, body {
             margin: 0;
-            padding: 30px;
+            padding: 0;
             font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
             background: ${theme.colors.background};
             color: ${theme.colors.text};
             min-height: 100vh;
+            width: 100%;
+        }
+        
+        body {
+            padding: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: visible;
         }
         
         .code-container {
@@ -119,7 +125,10 @@ export function createHTMLWithFilename(code: string, language: string, theme: Th
             border: 1px solid ${theme.colors.border};
             width: 800px;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+            max-width: 100%;
+            min-height: 200px;
+            margin-bottom: 30px;
         }
         
         .window-header {
@@ -252,6 +261,7 @@ export function createHTMLWithFilename(code: string, language: string, theme: Th
             border-radius: 12px;
             padding: 20px;
             overflow-x: auto;
+            overflow-y: visible;
             font-size: 16px;
             line-height: 1.7;
             white-space: pre;
@@ -259,6 +269,7 @@ export function createHTMLWithFilename(code: string, language: string, theme: Th
             border: 1px solid ${theme.colors.border};
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
             position: relative;
+            word-wrap: break-word;
         }
         
         .code-block::before {
