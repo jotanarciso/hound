@@ -169,7 +169,18 @@ async function generateSnippetImageWithTheme(
         const configContent = fs.readFileSync(configPath, 'utf8');
         const config = JSON.parse(configContent);
         if (config.customThemes) {
-          Object.assign(allThemes, config.customThemes);
+          // Merge custom themes with built-in themes
+          for (const [themeKey, customTheme] of Object.entries(config.customThemes)) {
+            if (allThemes[themeKey]) {
+              // If theme already exists, merge it
+              console.log(`Cirne.co: Merging custom theme "${themeKey}" with built-in theme`);
+              allThemes[themeKey] = mergeThemes(allThemes[themeKey], customTheme as Theme);
+            } else {
+              // If it's a new theme, add it
+              console.log(`Cirne.co: Adding new custom theme "${themeKey}"`);
+              allThemes[themeKey] = customTheme as Theme;
+            }
+          }
         }
       }
     } catch (error) {
@@ -386,11 +397,6 @@ interface Theme {
 interface CirnecoConfig {
   theme?: string;
   customThemes?: { [key: string]: Theme };
-  options?: {
-    showTitle?: boolean;
-    showLanguageBadge?: boolean;
-    showWindowControls?: boolean;
-  };
 }
 
 function loadTheme(): Theme {
@@ -770,15 +776,6 @@ function ensureCirnecoConfig(themeName: string): void {
     
     // Update or set the theme
     config.theme = themeName;
-    
-    // Add default options if they don't exist
-    if (!config.options) {
-      config.options = {
-        showTitle: true,
-        showLanguageBadge: true,
-        showWindowControls: true
-      };
-    }
     
     // Create the config content
     const configContent = JSON.stringify(config, null, 2);

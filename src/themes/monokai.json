@@ -20,5 +20,10 @@
     "punctuation": "#f8f8f2",
     "variable": "#f8f8f2",
     "property": "#66d9ef"
+  },
+  "options": {
+    "showTitle": true,
+    "showLanguageBadge": true,
+    "showWindowControls": true
   }
 } 

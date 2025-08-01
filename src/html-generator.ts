@@ -1,6 +1,4 @@
-import * as vscode from 'vscode';
-import * as fs from 'fs-extra';
-import * as path from 'path';
+
 import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-javascript';
@@ -31,10 +29,25 @@ interface Theme {
     variable: string;
     property: string;
   };
+  options?: {
+    showTitle?: boolean;
+    showLanguageBadge?: boolean;
+    showWindowControls?: boolean;
+  };
 }
 
 export function createHTMLWithFilename(code: string, language: string, theme: Theme, filename?: string): string {
   console.log('createHTMLWithFilename called with filename:', filename);
+  
+  // Get theme options with defaults
+  const options = theme.options || {};
+  const showTitle = options.showTitle !== false; // Default to true
+  const showLanguageBadge = options.showLanguageBadge !== false; // Default to true
+  const showWindowControls = options.showWindowControls !== false; // Default to true
+  
+  console.log('HTML Generator - Theme options:', options);
+  console.log('HTML Generator - Flags:', { showTitle, showLanguageBadge, showWindowControls });
+  
   // Map VS Code language IDs to Prism language names
   const languageMap: { [key: string]: string } = {
     'javascript': 'javascript',
@@ -132,7 +145,7 @@ export function createHTMLWithFilename(code: string, language: string, theme: Th
         }
         
         .window-header {
-            background: #2d2d2d;
+            background: ${theme.colors.container};
             padding: 12px 20px;
             border-bottom: 1px solid ${theme.colors.border};
             display: flex;
@@ -165,7 +178,7 @@ export function createHTMLWithFilename(code: string, language: string, theme: Th
         }
         
         .window-title {
-            color: #ffffff;
+            color: ${theme.colors.text};
             font-size: 14px;
             font-weight: 500;
             opacity: 1;
@@ -326,13 +339,15 @@ export function createHTMLWithFilename(code: string, language: string, theme: Th
 <body>
     <div class="code-container">
         <div class="window-header">
+            ${showWindowControls ? `
             <div class="window-controls">
                 <div class="window-control close"></div>
                 <div class="window-control minimize"></div>
                 <div class="window-control maximize"></div>
             </div>
-            <div class="window-title">${filename ? filename : 'untitled'}</div>
-            <div class="language-badge">${language}</div>
+            ` : ''}
+            ${showTitle ? `<div class="window-title">${filename ? filename : 'untitled'}</div>` : ''}
+            ${showLanguageBadge ? `<div class="language-badge">${language}</div>` : ''}
         </div>
         <div class="code-content">
             <div class="code-block">${highlightedCode}</div>

@@ -1,0 +1,76 @@
+{
+  "workspaceInstructions": "This is a VS Code extension project called Cirne.co that generates beautiful code snippets as PNG images. The extension provides two main commands for creating screenshots of selected code with syntax highlighting and customizable themes.",
+  
+  "projectContext": {
+    "name": "Cirne.co VS Code Extension",
+    "type": "TypeScript VS Code Extension",
+    "framework": "VS Code Extension API",
+    "mainTechnologies": [
+      "TypeScript",
+      "VS Code Extension API", 
+      "Puppeteer",
+      "Prism.js",
+      "Node.js"
+    ],
+    "buildSystem": "npm scripts with TypeScript compiler"
+  },
+
+  "keyFiles": {
+    "src/extension.ts": "Main extension entry point with command registration and core logic",
+    "src/html-generator.ts": "HTML/CSS generation for code snippets with theme support",
+    "src/themes.json": "Theme mapping file that references individual theme files",
+    "src/themes/": "Directory containing individual theme JSON files",
+    "package.json": "Extension manifest with commands, dependencies, and metadata",
+    ".cirneco.json": "User configuration file (auto-created in workspace)",
+    "CLAUDE.md": "Comprehensive project documentation for AI assistants"
+  },
+
+  "codeStyle": {
+    "language": "TypeScript",
+    "formatting": "Standard TypeScript conventions",
+    "naming": "camelCase for variables/functions, PascalCase for classes/interfaces",
+    "imports": "ES6 imports, group by type (vscode, node modules, local)",
+    "errorHandling": "Try-catch blocks with meaningful error messages",
+    "logging": "Console.log for debugging, prefixed with 'Cirne.co:'"
+  },
+
+  "architecturePatterns": {
+    "commandPattern": "VS Code commands registered in extension.ts",
+    "themeSystem": "JSON-based themes with merging capabilities",
+    "configurationManagement": "Auto-creating .cirneco.json with user preferences",
+    "htmlGeneration": "Template-based HTML generation with theme interpolation",
+    "screenshotGeneration": "Puppeteer headless browser for image capture"
+  },
+
+  "developmentGuidelines": {
+    "testing": "Manual testing with F5 debug mode in VS Code",
+    "building": "npm run compile (TypeScript + theme file copying)",
+    "debugging": "Use VS Code debug console and extension host logs",
+    "themeAddition": "Add JSON file in src/themes/ and update src/themes.json",
+    "brandConsistency": "All user-facing messages should include 'Cirne.co:' prefix"
+  },
+
+  "commonTasks": {
+    "addNewTheme": "Create JSON file in src/themes/, update src/themes.json mapping",
+    "modifyCommand": "Update package.json contributes.commands and extension.ts handlers",
+    "updateStyling": "Modify CSS in src/html-generator.ts createHTMLWithFilename function",
+    "addConfiguration": "Extend CirnecoConfig interface and ensureCirnecoConfig function",
+    "debugIssues": "Check extension host console, verify file paths, test theme loading"
+  },
+
+  "importantNotes": {
+    "fileNaming": "Configuration file is .cirneco.json (with dot prefix)",
+    "themeStructure": "Themes have colors, syntax, and options properties",
+    "commandTypes": "Two commands: default theme vs theme picker",
+    "screenshotLogic": "generateSnippetImage works reliably, generateSnippetImageWithTheme has theme support",
+    "optionsSystem": "showTitle, showLanguageBadge, showWindowControls control visibility"
+  },
+
+  "troubleshooting": {
+    "compilationErrors": "Run npm run compile, check TypeScript errors",
+    "themeNotLoading": "Verify src/themes.json mapping and file paths",
+    "configNotCreating": "Check ensureCirnecoConfig function calls",
+    "screenshotIssues": "Verify Puppeteer args and viewport settings",
+    "stylingProblems": "Check CSS template literals in html-generator.ts"
+  }
+}

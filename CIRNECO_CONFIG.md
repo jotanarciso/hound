@@ -12,11 +12,6 @@ You can customize themes, options, and add custom themes here.
 ```json
 {
   "theme": "dark-mode",
-  "options": {
-    "showTitle": true,
-    "showLanguageBadge": true,
-    "showWindowControls": true
-  },
   "customThemes": {
     "my-custom-theme": {
       "name": "My Custom Theme",
@@ -53,11 +48,6 @@ You can customize themes, options, and add custom themes here.
 
 ## Configuration Options
 
-### Global Options
-- `showTitle`: Show/hide the filename in the title bar
-- `showLanguageBadge`: Show/hide the language badge
-- `showWindowControls`: Show/hide the window control buttons
-
 ### Theme Extension
 You can extend existing themes by using the same name:
 ```json
@@ -69,11 +59,13 @@ You can extend existing themes by using the same name:
         "background": "#0a0a0a"
       },
       "options": {
-        "showTitle": false
+        "showTitle": false,
+        "showLanguageBadge": false,
+        "showWindowControls": false
       }
     }
   }
 }
 ```
 
-This will merge your customizations with the built-in dark-mode theme. 
+This will merge your customizations with the built-in dark-mode theme. You can override colors, syntax highlighting, and options per theme. 

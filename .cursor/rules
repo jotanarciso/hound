@@ -1,0 +1,150 @@
+# Cirne.co VS Code Extension - Development Rules
+
+## Code Consistency Rules
+
+### 1. Brand Naming
+- Always use "Cirne.co" (with dot) in user-facing messages
+- Extension display name is "Cirne.co"
+- Command titles start with "Cirne.co:"
+- Log messages prefixed with "Cirne.co:"
+- Error messages include "Cirne.co:" prefix
+
+### 2. File Naming Conventions
+- Configuration file: `.cirneco.json` (with dot prefix)
+- Theme files: lowercase with hyphens (e.g., `dark-mode.json`)
+- TypeScript files: camelCase (e.g., `html-generator.ts`)
+
+### 3. Function Naming Patterns
+- Command handlers: descriptive names matching command purpose
+- Theme functions: `loadTheme`, `mergeThemes`, `getAvailableThemes`
+- Config functions: `ensureCirnecoConfig`
+- Generation functions: `generateSnippetImage`, `createHTMLWithFilename`
+
+### 4. Interface Definitions
+- `Theme`: colors, syntax, options properties
+- `CirnecoConfig`: theme, customThemes, options properties
+- Options: showTitle, showLanguageBadge, showWindowControls
+
+## Architecture Rules
+
+### 1. Command Structure
+- Two main commands: default theme vs theme picker
+- Default theme always uses 'dracula'
+- Theme picker allows selection and saves choice
+- Both commands call ensureCirnecoConfig to maintain config
+
+### 2. Theme System
+- Built-in themes in src/themes/ directory
+- Theme mapping in src/themes.json
+- Custom themes merged with built-in themes
+- Theme merging preserves base structure, overrides specific properties
+
+### 3. Configuration Management
+- Auto-create .cirneco.json if not exists
+- Save selected themes for persistence
+- Include default options on first creation
+- Validate configuration before use
+
+### 4. HTML Generation
+- Use template literals with theme interpolation
+- Conditional rendering based on options
+- Maintain semantic HTML structure
+- Apply theme colors consistently
+
+## Quality Assurance Rules
+
+### 1. Error Handling
+- Wrap Puppeteer operations in try-catch
+- Provide meaningful error messages to users
+- Log detailed errors to console for debugging
+- Graceful fallbacks for missing themes/config
+
+### 2. Performance Considerations
+- Load themes only when needed
+- Cache theme data appropriately
+- Optimize Puppeteer viewport settings
+- Clean up browser instances properly
+
+### 3. User Experience
+- Clear command names and descriptions
+- Immediate feedback with progress indicators
+- Consistent visual styling across themes
+- Professional branding integration
+
+### 4. Code Organization
+- Separate concerns: extension logic vs HTML generation
+- Modular theme system with individual files
+- Type-safe interfaces for all data structures
+- Clean imports and exports
+
+## Development Workflow Rules
+
+### 1. Testing Requirements
+- Test both commands with various code samples
+- Verify theme switching and customization works
+- Check configuration file creation and updates
+- Validate screenshot quality and completeness
+
+### 2. Build Process
+- Always run `npm run compile` after changes
+- Ensure theme files are copied to out/ directory
+- Verify TypeScript compilation succeeds
+- Check for linting errors before commits
+
+### 3. Theme Development
+- Create individual JSON files for new themes
+- Update src/themes.json mapping file
+- Test theme loading and application
+- Verify all color properties are defined
+
+### 4. Configuration Changes
+- Update both Theme and CirnecoConfig interfaces
+- Modify ensureCirnecoConfig for new options
+- Test configuration merging logic
+- Update documentation for new features
+
+## Critical Implementation Notes
+
+### 1. Screenshot Generation
+- Use generateSnippetImage for reliable basic screenshots
+- Use generateSnippetImageWithTheme for advanced features
+- Set proper Puppeteer viewport dimensions
+- Handle dynamic content height appropriately
+
+### 2. Theme Color Application
+- Use ${theme.colors.property} in CSS templates
+- Apply theme colors to all styled elements
+- Ensure text contrast meets accessibility standards
+- Test themes with light and dark variants
+
+### 3. Options System
+- Default all options to true for backwards compatibility
+- Use conditional rendering in HTML templates
+- Merge global options with theme-specific options
+- Validate option values before application
+
+### 4. File Path Handling
+- Use path.join for cross-platform compatibility
+- Handle workspace folder detection properly
+- Create output directories as needed
+- Use consistent file naming patterns
+
+## Debugging Guidelines
+
+### 1. Common Issues
+- Theme not loading: Check file paths and JSON syntax
+- Config not saving: Verify workspace folder exists
+- Screenshot failures: Check Puppeteer configuration
+- Styling problems: Validate CSS template interpolation
+
+### 2. Debugging Tools
+- VS Code extension host console
+- Debug mode with F5 in development
+- Console.log statements with "Cirne.co:" prefix
+- Error message details in user notifications
+
+### 3. Testing Scenarios
+- Test with no workspace folder
+- Test with invalid theme configurations
+- Test with very large code blocks
+- Test theme merging with custom themes
