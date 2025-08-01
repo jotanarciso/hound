@@ -1,0 +1,24 @@
+{
+  "name": "Dracula",
+  "description": "Tema escuro elegante inspirado no Dracula",
+  "colors": {
+    "background": "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%)",
+    "container": "linear-gradient(145deg, #1e1e2e 0%, #2d2d3f 100%)",
+    "codeBlock": "linear-gradient(145deg, #0f0f1a 0%, #1a1a2e 100%)",
+    "text": "#e6e6e6",
+    "border": "rgba(255, 255, 255, 0.1)",
+    "badge": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+  },
+  "syntax": {
+    "keyword": "#ff79c6",
+    "string": "#f1fa8c",
+    "comment": "#6272a4",
+    "number": "#bd93f9",
+    "function": "#50fa7b",
+    "class": "#8be9fd",
+    "operator": "#ff79c6",
+    "punctuation": "#f8f8f2",
+    "variable": "#f8f8f2",
+    "property": "#66d9ef"
+  }
+} 

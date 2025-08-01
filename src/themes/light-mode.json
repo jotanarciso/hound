@@ -1,0 +1,24 @@
+{
+  "name": "Light Mode",
+  "description": "Tema claro moderno e limpo",
+  "colors": {
+    "background": "#f8f9fa",
+    "container": "#ffffff",
+    "codeBlock": "#f1f3f4",
+    "text": "#202124",
+    "border": "#dadce0",
+    "badge": "#1a73e8"
+  },
+  "syntax": {
+    "keyword": "#d73a49",
+    "string": "#032f62",
+    "comment": "#6a737d",
+    "number": "#005cc5",
+    "function": "#6f42c1",
+    "class": "#e36209",
+    "operator": "#d73a49",
+    "punctuation": "#24292e",
+    "variable": "#e36209",
+    "property": "#005cc5"
+  }
+} 

@@ -1,0 +1,24 @@
+{
+  "name": "One Dark",
+  "description": "Tema escuro inspirado no Atom One Dark",
+  "colors": {
+    "background": "#282c34",
+    "container": "#21252b",
+    "codeBlock": "#1e2127",
+    "text": "#abb2bf",
+    "border": "#3e4451",
+    "badge": "#61afef"
+  },
+  "syntax": {
+    "keyword": "#c678dd",
+    "string": "#98c379",
+    "comment": "#5c6370",
+    "number": "#d19a66",
+    "function": "#61afef",
+    "class": "#e5c07b",
+    "operator": "#56b6c2",
+    "punctuation": "#abb2bf",
+    "variable": "#e06c75",
+    "property": "#61afef"
+  }
+} 

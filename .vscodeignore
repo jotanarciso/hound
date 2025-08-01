@@ -1,5 +1,10 @@
 .vscode-test/**
 src/**
+!src/themes.json
+!src/themes/
+!src/themes/*.json
+!src/themes/**/*.json
+!src/html-generator.js
 .gitignore
 .yarnrc
 vsc-extension-quickstart.md

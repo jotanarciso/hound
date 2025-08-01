@@ -1,0 +1,24 @@
+{
+  "name": "GitHub Dark",
+  "description": "Tema escuro inspirado no GitHub",
+  "colors": {
+    "background": "#0d1117",
+    "container": "#161b22",
+    "codeBlock": "#0d1117",
+    "text": "#c9d1d9",
+    "border": "#30363d",
+    "badge": "#238636"
+  },
+  "syntax": {
+    "keyword": "#ff7b72",
+    "string": "#a5d6ff",
+    "comment": "#8b949e",
+    "number": "#79c0ff",
+    "function": "#d2a8ff",
+    "class": "#ffa657",
+    "operator": "#ff7b72",
+    "punctuation": "#c9d1d9",
+    "variable": "#ffa198",
+    "property": "#79c0ff"
+  }
+} 

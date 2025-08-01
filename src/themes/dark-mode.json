@@ -1,0 +1,24 @@
+{
+  "name": "Dark Mode",
+  "description": "Tema escuro moderno e minimalista",
+  "colors": {
+    "background": "#1a1a1a",
+    "container": "#2d2d2d",
+    "codeBlock": "#1e1e1e",
+    "text": "#e6e6e6",
+    "border": "#404040",
+    "badge": "#007acc"
+  },
+  "syntax": {
+    "keyword": "#569cd6",
+    "string": "#ce9178",
+    "comment": "#6a9955",
+    "number": "#b5cea8",
+    "function": "#dcdcaa",
+    "class": "#4ec9b0",
+    "operator": "#d4d4d4",
+    "punctuation": "#d4d4d4",
+    "variable": "#9cdcfe",
+    "property": "#9cdcfe"
+  }
+} 

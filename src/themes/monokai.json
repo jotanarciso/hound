@@ -1,0 +1,24 @@
+{
+  "name": "Monokai",
+  "description": "Tema escuro com cores vibrantes",
+  "colors": {
+    "background": "#272822",
+    "container": "#3e3d32",
+    "codeBlock": "#272822",
+    "text": "#f8f8f2",
+    "border": "#75715e",
+    "badge": "#f92672"
+  },
+  "syntax": {
+    "keyword": "#f92672",
+    "string": "#e6db74",
+    "comment": "#75715e",
+    "number": "#ae81ff",
+    "function": "#a6e22e",
+    "class": "#a6e22e",
+    "operator": "#f92672",
+    "punctuation": "#f8f8f2",
+    "variable": "#f8f8f2",
+    "property": "#66d9ef"
+  }
+} 
