@@ -26,19 +26,42 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      // Use dracula as default theme and ensure .cirneco.json exists
-      const defaultThemeName = 'dracula';
-      ensureCirnecoConfig(defaultThemeName);
-
       try {
+        // Get filename from current document
+        const fullPath = editor.document.fileName;
+        const filename = fullPath.split('/').pop() || fullPath.split('\\').pop() || 'untitled';
+        
+        // Get theme from config or use default
+        let themeName = 'dracula'; // Default theme
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        if (workspaceFolder) {
+          const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
+          try {
+            if (fs.existsSync(configPath)) {
+              const configContent = fs.readFileSync(configPath, 'utf8');
+              const config = JSON.parse(configContent);
+              if (config.theme) {
+                themeName = config.theme;
+                console.log(`Cirne.co: Using configured theme: ${themeName}`);
+              } else {
+                console.log(`Cirne.co: No theme in config, using default: ${themeName}`);
+              }
+            } else {
+              console.log(`Cirne.co: No config file found, using default theme: ${themeName}`);
+            }
+          } catch (error) {
+            console.error('Cirne.co: Error loading theme from config:', error);
+          }
+        }
+        
         // Show loading notification
         await vscode.window.withProgress({
           location: vscode.ProgressLocation.Notification,
-                      title: "Cirne.co: Generating snippet...",
+          title: `Cirne.co: Generating snippet with ${themeName} theme...`,
           cancellable: false
         }, async (progress) => {
           progress.report({ increment: 0 });
-        await generateSnippetImage(text, editor.document.languageId);
+          await generateSnippetImageWithTheme(text, editor.document.languageId, themeName, filename);
           progress.report({ increment: 100 });
         });
       } catch (error) {

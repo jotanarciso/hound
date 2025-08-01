@@ -14,7 +14,7 @@
     "commands": [
       {
         "command": "cirneco.generateSnippet",
-        "title": "Cirne.co: Generate with default theme"
+        "title": "Cirne.co: Generate"
       },
       {
         "command": "cirneco.generateSnippetWithTheme",
