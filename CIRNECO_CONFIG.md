@@ -7,7 +7,7 @@ Get configuration help at: https://cirne.co/how-to
 This file is automatically created and updated by Cirneco.
 You can customize themes, options, and add custom themes here.
 
-## Example Configuration
+## Example Configuration@@
 
 ```json
 {
@@ -50,13 +50,17 @@ You can customize themes, options, and add custom themes here.
 ## Configuration Options
 
 ### Output Folder
+
 You can specify where snippets are saved:
+
 - `outputFolder`: Name of the folder where snippets will be saved (default: "snippets")
 - On first use, Cirneco will ask you to choose the folder name
 - The folder will be created in your workspace root
 
 ### Theme Extension
+
 You can extend existing themes by using the same name:
+
 ```json
 {
   "theme": "dark-mode",
@@ -75,4 +79,4 @@ You can extend existing themes by using the same name:
 }
 ```
 
-This will merge your customizations with the built-in dark-mode theme. You can override colors, syntax highlighting, and options per theme. 
+This will merge your customizations with the built-in dark-mode theme. You can override colors, syntax highlighting, and options per theme.

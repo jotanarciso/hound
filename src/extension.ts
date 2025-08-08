@@ -19,53 +19,72 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       const selection = editor.selection;
-      const text = editor.document.getText(selection);
+      let text = editor.document.getText(selection);
 
+      // If no text is selected, use the entire document
       if (!text.trim()) {
-        vscode.window.showErrorMessage("Cirne.co: Please select some code first");
-        return;
+        text = editor.document.getText();
+        console.log("Cirne.co: No selection found, using entire document");
       }
 
       try {
         // Get filename from current document
         const fullPath = editor.document.fileName;
-        const filename = fullPath.split('/').pop() || fullPath.split('\\').pop() || 'untitled';
-        
+        const filename =
+          fullPath.split("/").pop() || fullPath.split("\\").pop() || "untitled";
+
         // Get theme from config or use default
-        let themeName = 'dracula'; // Default theme
+        let themeName = "dracula"; // Default theme
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
         if (workspaceFolder) {
-          const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
+          const configPath = path.join(
+            workspaceFolder.uri.fsPath,
+            ".cirneco.json"
+          );
           try {
             if (fs.existsSync(configPath)) {
-              const configContent = fs.readFileSync(configPath, 'utf8');
+              const configContent = fs.readFileSync(configPath, "utf8");
               const config = JSON.parse(configContent);
               if (config.theme) {
                 themeName = config.theme;
                 console.log(`Cirne.co: Using configured theme: ${themeName}`);
               } else {
-                console.log(`Cirne.co: No theme in config, using default: ${themeName}`);
+                console.log(
+                  `Cirne.co: No theme in config, using default: ${themeName}`
+                );
               }
             } else {
-              console.log(`Cirne.co: No config file found, using default theme: ${themeName}`);
+              console.log(
+                `Cirne.co: No config file found, using default theme: ${themeName}`
+              );
             }
           } catch (error) {
-            console.error('Cirne.co: Error loading theme from config:', error);
+            console.error("Cirne.co: Error loading theme from config:", error);
           }
         }
-        
+
         // Show loading notification
-        await vscode.window.withProgress({
-          location: vscode.ProgressLocation.Notification,
-          title: `Cirne.co: Generating snippet with ${themeName} theme...`,
-          cancellable: false
-        }, async (progress) => {
-          progress.report({ increment: 0 });
-          await generateSnippetImageWithTheme(text, editor.document.languageId, themeName, filename);
-          progress.report({ increment: 100 });
-        });
+        await vscode.window.withProgress(
+          {
+            location: vscode.ProgressLocation.Notification,
+            title: `Cirne.co: Generating snippet with ${themeName} theme...`,
+            cancellable: false,
+          },
+          async (progress) => {
+            progress.report({ increment: 0 });
+            await generateSnippetImageWithTheme(
+              text,
+              editor.document.languageId,
+              themeName,
+              filename
+            );
+            progress.report({ increment: 100 });
+          }
+        );
       } catch (error) {
-        vscode.window.showErrorMessage(`Cirne.co: Failed to generate snippet: ${error}`);
+        vscode.window.showErrorMessage(
+          `Cirne.co: Failed to generate snippet: ${error}`
+        );
       }
     }
   );
@@ -83,50 +102,63 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       const selection = editor.selection;
-      const text = editor.document.getText(selection);
+      let text = editor.document.getText(selection);
 
+      // If no text is selected, use the entire document
       if (!text.trim()) {
-        vscode.window.showErrorMessage("Cirne.co: Please select some code first");
-        return;
+        text = editor.document.getText();
+        console.log("Cirne.co: No selection found, using entire document");
       }
 
       // Show theme selection
       const builtInThemes = getAvailableThemes();
-      
+
       const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
       let allThemes = { ...builtInThemes };
-      
+
       // Add custom themes from user config
       if (workspaceFolder) {
-        const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
+        const configPath = path.join(
+          workspaceFolder.uri.fsPath,
+          ".cirneco.json"
+        );
         try {
           if (fs.existsSync(configPath)) {
-            const configContent = fs.readFileSync(configPath, 'utf8');
+            const configContent = fs.readFileSync(configPath, "utf8");
             const config = JSON.parse(configContent);
             if (config.customThemes) {
               // Merge custom themes with built-in themes
-              for (const [themeKey, customTheme] of Object.entries(config.customThemes)) {
+              for (const [themeKey, customTheme] of Object.entries(
+                config.customThemes
+              )) {
                 if (allThemes[themeKey]) {
                   // If theme already exists, merge it
-                  console.log(`Cirne.co: Merging custom theme "${themeKey}" with built-in theme`);
-                  allThemes[themeKey] = mergeThemes(allThemes[themeKey], customTheme as Theme);
+                  console.log(
+                    `Cirne.co: Merging custom theme "${themeKey}" with built-in theme`
+                  );
+                  allThemes[themeKey] = mergeThemes(
+                    allThemes[themeKey],
+                    customTheme as Theme
+                  );
                 } else {
                   // If it's a new theme, add it
-                  console.log(`Cirne.co: Adding new custom theme "${themeKey}"`);
+                  console.log(
+                    `Cirne.co: Adding new custom theme "${themeKey}"`
+                  );
                   allThemes[themeKey] = customTheme as Theme;
                 }
               }
             }
           }
         } catch (error) {
-          console.error('Error loading custom themes:', error);
+          console.error("Error loading custom themes:", error);
         }
       }
-      
+
       const themeNames = Object.keys(allThemes);
-      
+
       const selectedTheme = await vscode.window.showQuickPick(themeNames, {
-        placeHolder: "Select a theme for your snippet"
+        placeHolder: "Select a theme for your snippet",
       });
 
       if (!selectedTheme) {
@@ -139,22 +171,33 @@ export function activate(context: vscode.ExtensionContext) {
       try {
         // Get filename from current document
         const fullPath = editor.document.fileName;
-        const filename = fullPath.split('/').pop() || fullPath.split('\\').pop() || 'untitled';
-        console.log('Full path:', fullPath);
-        console.log('Extracted filename:', filename);
-        
+        const filename =
+          fullPath.split("/").pop() || fullPath.split("\\").pop() || "untitled";
+        console.log("Full path:", fullPath);
+        console.log("Extracted filename:", filename);
+
         // Show loading notification
-        await vscode.window.withProgress({
-          location: vscode.ProgressLocation.Notification,
-                      title: `Cirne.co: Generating snippet with ${selectedTheme} theme...`,
-          cancellable: false
-        }, async (progress) => {
-          progress.report({ increment: 0 });
-          await generateSnippetImageWithTheme(text, editor.document.languageId, selectedTheme, filename);
-          progress.report({ increment: 100 });
-        });
+        await vscode.window.withProgress(
+          {
+            location: vscode.ProgressLocation.Notification,
+            title: `Cirne.co: Generating snippet with ${selectedTheme} theme...`,
+            cancellable: false,
+          },
+          async (progress) => {
+            progress.report({ increment: 0 });
+            await generateSnippetImageWithTheme(
+              text,
+              editor.document.languageId,
+              selectedTheme,
+              filename
+            );
+            progress.report({ increment: 100 });
+          }
+        );
       } catch (error) {
-        vscode.window.showErrorMessage(`Cirne.co: Failed to generate snippet: ${error}`);
+        vscode.window.showErrorMessage(
+          `Cirne.co: Failed to generate snippet: ${error}`
+        );
       }
     }
   );
@@ -185,21 +228,28 @@ async function generateSnippetImageWithTheme(
   // Get theme
   const builtInThemes = getAvailableThemes();
   let allThemes = { ...builtInThemes };
-  
+
   // Add custom themes from user config
   if (workspaceFolder) {
-    const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
+    const configPath = path.join(workspaceFolder.uri.fsPath, ".cirneco.json");
     try {
       if (fs.existsSync(configPath)) {
-        const configContent = fs.readFileSync(configPath, 'utf8');
+        const configContent = fs.readFileSync(configPath, "utf8");
         const config = JSON.parse(configContent);
         if (config.customThemes) {
           // Merge custom themes with built-in themes
-          for (const [themeKey, customTheme] of Object.entries(config.customThemes)) {
+          for (const [themeKey, customTheme] of Object.entries(
+            config.customThemes
+          )) {
             if (allThemes[themeKey]) {
               // If theme already exists, merge it
-              console.log(`Cirne.co: Merging custom theme "${themeKey}" with built-in theme`);
-              allThemes[themeKey] = mergeThemes(allThemes[themeKey], customTheme as Theme);
+              console.log(
+                `Cirne.co: Merging custom theme "${themeKey}" with built-in theme`
+              );
+              allThemes[themeKey] = mergeThemes(
+                allThemes[themeKey],
+                customTheme as Theme
+              );
             } else {
               // If it's a new theme, add it
               console.log(`Cirne.co: Adding new custom theme "${themeKey}"`);
@@ -209,81 +259,81 @@ async function generateSnippetImageWithTheme(
         }
       }
     } catch (error) {
-      console.error('Error loading custom themes:', error);
+      console.error("Error loading custom themes:", error);
     }
   }
-  
-  const theme = allThemes[themeName] || getDefaultTheme();
-  
-      // Create HTML with specific theme and filename
-    console.log('Document filename:', documentFilename);
-    const html = createHTMLWithFilename(code, language, theme, documentFilename);
 
-    // Launch browser and generate image
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  const theme = allThemes[themeName] || getDefaultTheme();
+
+  // Create HTML with specific theme and filename
+  console.log("Document filename:", documentFilename);
+  const html = createHTMLWithFilename(code, language, theme, documentFilename);
+
+  // Launch browser and generate image
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+
+  try {
+    const page = await browser.newPage();
+
+    // Set initial viewport for high resolution
+    await page.setViewport({
+      width: 900,
+      height: 600,
+      deviceScaleFactor: 2, // 2x for retina/high DPI
     });
 
-    try {
-      const page = await browser.newPage();
-      
-      // Set initial viewport for high resolution
-      await page.setViewport({
-        width: 900,
-        height: 600,
-        deviceScaleFactor: 2, // 2x for retina/high DPI
-      });
-      
-      await page.setContent(html);
+    await page.setContent(html);
 
-      // Wait for content to render
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    // Wait for content to render
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Get the element and calculate proper dimensions
-      const element = await page.$(".code-container");
-      if (!element) {
-        throw new Error("Could not find code container element");
-      }
+    // Get the element and calculate proper dimensions
+    const element = await page.$(".code-container");
+    if (!element) {
+      throw new Error("Could not find code container element");
+    }
 
-      // Get element dimensions
-      const boundingBox = await element.boundingBox();
-      if (!boundingBox) {
-        throw new Error("Could not get element dimensions");
-      }
+    // Get element dimensions
+    const boundingBox = await element.boundingBox();
+    if (!boundingBox) {
+      throw new Error("Could not get element dimensions");
+    }
 
-      // Calculate proper height with padding
-      const actualHeight = Math.ceil(boundingBox.height);
-      const padding = 300; // Increase padding significantly
-      const contentHeight = actualHeight + padding;
-      
-      console.log('Element height:', actualHeight);
-      console.log('Content height with padding:', contentHeight);
-      
-      // Reload page with correct viewport to avoid clipping
-      await page.setViewport({
-        width: 900,
-        height: contentHeight,
-        deviceScaleFactor: 2,
-      });
-      
-      // Reload content with new viewport
-      await page.setContent(html);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Increase wait time
+    // Calculate proper height with padding
+    const actualHeight = Math.ceil(boundingBox.height);
+    const padding = 300; // Increase padding significantly
+    const contentHeight = actualHeight + padding;
 
-      // Wait for element to be visible and get it again
-      await page.waitForSelector('.code-container', { visible: true });
-      const visibleElement = await page.$(".code-container");
-      if (!visibleElement) {
-        throw new Error("Could not find code container element");
-      }
+    console.log("Element height:", actualHeight);
+    console.log("Content height with padding:", contentHeight);
 
-      // Take screenshot of the element with proper background
-      await visibleElement.screenshot({
-        path: outputPath,
-        type: "png",
-        omitBackground: false
-      });
+    // Reload page with correct viewport to avoid clipping
+    await page.setViewport({
+      width: 900,
+      height: contentHeight,
+      deviceScaleFactor: 2,
+    });
+
+    // Reload content with new viewport
+    await page.setContent(html);
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Increase wait time
+
+    // Wait for element to be visible and get it again
+    await page.waitForSelector(".code-container", { visible: true });
+    const visibleElement = await page.$(".code-container");
+    if (!visibleElement) {
+      throw new Error("Could not find code container element");
+    }
+
+    // Take screenshot of the element with proper background
+    await visibleElement.screenshot({
+      path: outputPath,
+      type: "png",
+      omitBackground: false,
+    });
 
     vscode.window
       .showInformationMessage(
@@ -302,8 +352,6 @@ async function generateSnippetImageWithTheme(
     await browser.close();
   }
 }
-
-
 
 async function generateSnippetImage(
   code: string,
@@ -334,18 +382,18 @@ async function generateSnippetImage(
 
   try {
     const page = await browser.newPage();
-    
+
     // Set viewport for high resolution
     await page.setViewport({
       width: 900,
       height: 600,
       deviceScaleFactor: 2, // 2x for retina/high DPI
     });
-    
+
     await page.setContent(html);
 
     // Wait for content to render
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Get the element and take screenshot
     const element = await page.$(".code-container");
@@ -370,7 +418,7 @@ async function generateSnippetImage(
     await element.screenshot({
       path: outputPath,
       type: "png",
-      omitBackground: false
+      omitBackground: false,
     });
 
     vscode.window
@@ -433,51 +481,51 @@ function loadTheme(): Theme {
     return getDefaultTheme();
   }
 
-  const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
-  
+  const configPath = path.join(workspaceFolder.uri.fsPath, ".cirneco.json");
+
   try {
     if (fs.existsSync(configPath)) {
-      const configContent = fs.readFileSync(configPath, 'utf8');
+      const configContent = fs.readFileSync(configPath, "utf8");
       const config = JSON.parse(configContent);
-      
+
       // Get all available themes (built-in + custom)
       const allThemes = { ...getAvailableThemes() };
-      
+
       // Add custom themes from user config
       if (config.customThemes) {
         Object.assign(allThemes, config.customThemes);
       }
-      
+
       // Get default theme
-      const defaultThemeName = config.defaultTheme || 'dracula';
+      const defaultThemeName = config.defaultTheme || "dracula";
       if (allThemes[defaultThemeName]) {
         return allThemes[defaultThemeName];
       }
     }
   } catch (error) {
-    console.error('Error loading theme:', error);
+    console.error("Error loading theme:", error);
   }
-  
+
   return getDefaultTheme();
 }
 
 function getAvailableThemes(): { [key: string]: Theme } {
   const themes: { [key: string]: Theme } = {};
-  
+
   try {
     // Load theme mappings from themes.json
-    const themesPath = path.join(__dirname, 'themes.json');
+    const themesPath = path.join(__dirname, "themes.json");
     if (fs.existsSync(themesPath)) {
-      const themesContent = fs.readFileSync(themesPath, 'utf8');
+      const themesContent = fs.readFileSync(themesPath, "utf8");
       const themeMappings = JSON.parse(themesContent);
-      
+
       // Load each theme from its individual file
       for (const [themeKey, themePath] of Object.entries(themeMappings)) {
         try {
           const fullThemePath = path.join(__dirname, themePath as string);
-          
+
           if (fs.existsSync(fullThemePath)) {
-            const themeContent = fs.readFileSync(fullThemePath, 'utf8');
+            const themeContent = fs.readFileSync(fullThemePath, "utf8");
             const theme = JSON.parse(themeContent);
             themes[themeKey] = theme;
           }
@@ -487,9 +535,9 @@ function getAvailableThemes(): { [key: string]: Theme } {
       }
     }
   } catch (error) {
-    console.error('Error loading themes.json:', error);
+    console.error("Error loading themes.json:", error);
   }
-  
+
   // Fallback to default theme if no themes loaded
   if (Object.keys(themes).length === 0) {
     themes["dark-mode"] = {
@@ -501,7 +549,7 @@ function getAvailableThemes(): { [key: string]: Theme } {
         codeBlock: "#1e1e1e",
         text: "#e6e6e6",
         border: "#404040",
-        badge: "#007acc"
+        badge: "#007acc",
       },
       syntax: {
         keyword: "#569cd6",
@@ -513,11 +561,11 @@ function getAvailableThemes(): { [key: string]: Theme } {
         operator: "#d4d4d4",
         punctuation: "#d4d4d4",
         variable: "#9cdcfe",
-        property: "#9cdcfe"
-      }
+        property: "#9cdcfe",
+      },
     };
   }
-  
+
   return themes;
 }
 
@@ -529,41 +577,45 @@ function createHTML(code: string, language: string): string {
   const theme = loadTheme();
   // Map VS Code language IDs to Prism language names
   const languageMap: { [key: string]: string } = {
-    'javascript': 'javascript',
-    'typescript': 'typescript',
-    'python': 'python',
-    'java': 'java',
-    'cpp': 'cpp',
-    'c': 'c',
-    'csharp': 'csharp',
-    'php': 'php',
-    'ruby': 'ruby',
-    'go': 'go',
-    'rust': 'rust',
-    'swift': 'swift',
-    'kotlin': 'kotlin',
-    'scala': 'scala',
-    'html': 'markup',
-    'css': 'css',
-    'scss': 'scss',
-    'less': 'less',
-    'json': 'json',
-    'xml': 'markup',
-    'yaml': 'yaml',
-    'markdown': 'markdown',
-    'sql': 'sql',
-    'bash': 'bash',
-    'shell': 'bash',
-    'powershell': 'powershell'
+    javascript: "javascript",
+    typescript: "typescript",
+    python: "python",
+    java: "java",
+    cpp: "cpp",
+    c: "c",
+    csharp: "csharp",
+    php: "php",
+    ruby: "ruby",
+    go: "go",
+    rust: "rust",
+    swift: "swift",
+    kotlin: "kotlin",
+    scala: "scala",
+    html: "markup",
+    css: "css",
+    scss: "scss",
+    less: "less",
+    json: "json",
+    xml: "markup",
+    yaml: "yaml",
+    markdown: "markdown",
+    sql: "sql",
+    bash: "bash",
+    shell: "bash",
+    powershell: "powershell",
   };
 
-  const prismLanguage = languageMap[language] || 'javascript';
-  
+  const prismLanguage = languageMap[language] || "javascript";
+
   // Highlight the code using Prism.js
   let highlightedCode = code;
   try {
     if (Prism.languages[prismLanguage]) {
-      highlightedCode = Prism.highlight(code, Prism.languages[prismLanguage], prismLanguage);
+      highlightedCode = Prism.highlight(
+        code,
+        Prism.languages[prismLanguage],
+        prismLanguage
+      );
     } else {
       // Fallback to plain text if language not supported
       highlightedCode = code
@@ -576,11 +628,11 @@ function createHTML(code: string, language: string): string {
   } catch (error) {
     // Fallback to plain text if highlighting fails
     highlightedCode = code
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
   return `
@@ -788,53 +840,42 @@ function createHTML(code: string, language: string): string {
 async function ensureOutputFolder(): Promise<string> {
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
   if (!workspaceFolder) {
-    throw new Error('No workspace folder found');
+    // Fallback to current file's directory if no workspace
+    const editor = vscode.window.activeTextEditor;
+    if (editor && editor.document.fileName) {
+      const fileDir = path.dirname(editor.document.fileName);
+      return "snippets"; // Default folder name
+    }
+    throw new Error("No workspace folder found and no active file");
   }
 
-  const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
+  const configPath = path.join(workspaceFolder.uri.fsPath, ".cirneco.json");
   let config: CirnecoConfig = {};
-  
+
   // Read existing config
   if (fs.existsSync(configPath)) {
     try {
-      const configContent = fs.readFileSync(configPath, 'utf8');
+      const configContent = fs.readFileSync(configPath, "utf8");
       config = JSON.parse(configContent);
     } catch (error) {
-      console.error('Cirne.co: Error reading config:', error);
+      console.error("Cirne.co: Error reading config:", error);
     }
   }
 
-  // If outputFolder is not set, ask user
+  // If outputFolder is not set, use default
   if (!config.outputFolder) {
-    const folderName = await vscode.window.showInputBox({
-      prompt: 'Cirne.co: Choose folder name to save snippets',
-      placeHolder: 'snippets',
-      value: 'snippets',
-      validateInput: (value) => {
-        if (!value || value.trim() === '') {
-          return 'Folder name cannot be empty';
-        }
-        if (value.includes('/') || value.includes('\\')) {
-          return 'Invalid folder name';
-        }
-        return null;
-      }
-    });
+    config.outputFolder = "snippets";
 
-    if (!folderName) {
-      throw new Error('No folder selected');
-    }
-
-    config.outputFolder = folderName.trim();
-    
     // Save config
     try {
       const configContent = JSON.stringify(config, null, 2);
       fs.writeFileSync(configPath, configContent);
-      console.log(`Cirne.co: Saved output folder: ${config.outputFolder}`);
+      console.log(
+        `Cirne.co: Created config with default output folder: ${config.outputFolder}`
+      );
     } catch (error) {
-      console.error('Cirne.co: Error saving config:', error);
-      throw error;
+      console.error("Cirne.co: Error saving config:", error);
+      // Don't throw, just use default
     }
   }
 
@@ -847,29 +888,28 @@ function ensureCirnecoConfig(themeName: string): void {
     return;
   }
 
-  const configPath = path.join(workspaceFolder.uri.fsPath, '.cirneco.json');
-  
+  const configPath = path.join(workspaceFolder.uri.fsPath, ".cirneco.json");
+
   try {
     let config: CirnecoConfig = {};
-    
+
     // Load existing config if it exists
     if (fs.existsSync(configPath)) {
-      const configContent = fs.readFileSync(configPath, 'utf8');
+      const configContent = fs.readFileSync(configPath, "utf8");
       config = JSON.parse(configContent);
     }
-    
+
     // Update or set the theme
     config.theme = themeName;
-    
+
     // Create the config content
     const configContent = JSON.stringify(config, null, 2);
-    
+
     // Write the config file
     fs.writeFileSync(configPath, configContent);
     console.log(`Cirne.co: Updated .cirneco.json with theme: ${themeName}`);
-    
   } catch (error) {
-    console.error('Cirne.co: Error updating .cirneco.json:', error);
+    console.error("Cirne.co: Error updating .cirneco.json:", error);
   }
 }
 
@@ -879,16 +919,16 @@ function mergeThemes(baseTheme: Theme, customTheme: Theme): Theme {
     description: customTheme.description || baseTheme.description,
     colors: {
       ...baseTheme.colors,
-      ...customTheme.colors
+      ...customTheme.colors,
     },
     syntax: {
       ...baseTheme.syntax,
-      ...customTheme.syntax
+      ...customTheme.syntax,
     },
     options: {
       ...baseTheme.options,
-      ...customTheme.options
-    }
+      ...customTheme.options,
+    },
   };
 }
 
